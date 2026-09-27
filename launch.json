@@ -1,0 +1,26 @@
+{
+  "kind": "univ4_hook",
+  "hook": {
+    "contract": "SwapPointsHook",
+    "constructorArgs": [
+      "0xE03A1074c86CFeDd5C142C4F04F1a1536e203543"
+    ],
+    "permissions": [
+      "afterInitialize",
+      "afterSwap"
+    ]
+  },
+  "token": {
+    "contract": "Points",
+    "name": "Points",
+    "symbol": "PNTS",
+    "decimals": 18
+  },
+  "pool": {
+    "pairedCurrency": "0x0000000000000000000000000000000000000000",
+    "fee": 3000,
+    "tickSpacing": 60,
+    "initialPrice": "79228162514264337593543950336000"
+  },
+  "notes": "Sepolia native-ETH/PNTS pool: currency0 is native ETH and currency1 is Points. initialPrice is decimal sqrtPriceX96 = 1000 * 2^96, corresponding to 1 ETH = 1,000,000 PNTS with 18 decimals on both currencies, matching test/LaunchRehearsal.t.sol and its one-sided PNTS seed and first buy into an ETH-less pool. SwapPointsHook takes only IPoolManager; Points takes no constructor arguments. The hook validates address permission bits 0x1040; every other permission, including all return-delta permissions, is false. Enabled callbacks accept only the PoolManager. afterInitialize records startTime per PoolId. afterSwap awards 18-decimal non-transferable point-units from the settled ETH delta: ETH paid on buys times 10000, ETH received on sells times 5000, doubled strictly before startTime + 7 days. Exactly 32 bytes encoding a nonzero address in hookData selects the credited address; missing or malformed data credits nobody. hookData is unauthenticated: anyone can credit any address, and points can be farmed through round trips at the cost of LP fees and gas. Points and PNTS have no value and promise no return. State and the O(10) leaderboard are per PoolId; views are pointsOf, top10 and multiplierEndsAt, with Points events for awards. afterSwap on a pool whose currency0 is not native ETH returns zero and awards nothing; afterInitialize still records its startTime. The hook charges no fee, returns zero swap delta and has no fund custody or administrative controls. ABI documentation is in docs/abi/Points.json and docs/abi/SwapPointsHook.json. This manifest describes the implementation; launch policy and signed artifact linkage are supplied separately by services."
+}
